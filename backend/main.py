@@ -127,8 +127,14 @@ def update_product(
     db.commit()
     db.refresh(existing_product)
 
-    return existing_product
-
+    return {
+        "id": existing_product.id,
+        "name": existing_product.name,
+        "description": existing_product.description,
+        "price": existing_product.price,
+        "category": existing_product.category,
+        "stock": existing_inventory.quantity if existing_inventory else 0
+    }
 
 @app.delete("/products/{product_id}")
 def delete_product(

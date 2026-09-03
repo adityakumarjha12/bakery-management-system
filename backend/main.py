@@ -26,7 +26,10 @@ class ProductCreate(BaseModel):
     price: float
     category: str
     stock: int = 0
-
+class InventoryCreate(BaseModel):
+    product_id: int
+    quantity: int = 0
+    minimum_stock: int = 5
 
 @app.get("/")
 def home():
@@ -44,8 +47,25 @@ def health_check():
 
 @app.get("/products")
 def get_products(db: Session = Depends(get_db)):
-    return db.query(Product).all()
+    products = db.query(Product).all()
 
+    result = []
+
+    for product in products:
+        inventory = db.query(Inventory).filter(
+            Inventory.product_id == product.id
+        ).first()
+
+        result.append({
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "category": product.category,
+            "stock": inventory.quantity if inventory else 0
+        })
+
+    return result
 
 @app.post("/products")
 def create_product(
@@ -64,7 +84,23 @@ def create_product(
     db.commit()
     db.refresh(new_product)
 
-    return new_product
+    new_inventory = Inventory(
+        product_id=new_product.id,
+        quantity=product.stock,
+        minimum_stock=5
+    )
+
+    db.add(new_inventory)
+    db.commit()
+
+    return {
+        "id": new_product.id,
+        "name": new_product.name,
+        "description": new_product.description,
+        "price": new_product.price,
+        "category": new_product.category,
+        "stock": new_inventory.quantity
+    }
 @app.put("/products/{product_id}")
 def update_product(
     product_id: int,
@@ -82,8 +118,12 @@ def update_product(
     existing_product.description = product.description
     existing_product.price = product.price
     existing_product.category = product.category
-    existing_product.stock = product.stock
+    existing_inventory = db.query(Inventory).filter(
+        Inventory.product_id == product_id
+    ).first()
 
+    if existing_inventory:
+        existing_inventory.quantity = product.stock
     db.commit()
     db.refresh(existing_product)
 
@@ -102,16 +142,17 @@ def delete_product(
     if not existing_product:
         return {"message": "Product not found"}
 
+    existing_inventory = db.query(Inventory).filter(
+        Inventory.product_id == product_id
+    ).first()
+
+    if existing_inventory:
+        db.delete(existing_inventory)
+
     db.delete(existing_product)
     db.commit()
 
     return {"message": "Product deleted successfully"}
-class InventoryCreate(BaseModel):
-    product_id: int
-    quantity: int = 0
-    minimum_stock: int = 5
-
-
 @app.post("/inventory")
 def create_inventory(
     inventory: InventoryCreate,

@@ -161,7 +161,7 @@ def get_low_stock(db: Session = Depends(get_db)):
 
     return low_stock_items
 class OrderCreate(BaseModel):
-    customer_name: str
+    customer_id: int
     product_id: int
     quantity: int
 
@@ -171,6 +171,13 @@ def create_order(
     order: OrderCreate,
     db: Session = Depends(get_db)
 ):
+    customer = db.query(Customer).filter(
+        Customer.id == order.customer_id
+    ).first()
+
+    if not customer:
+        return {"message": "Customer not found"}
+
     product = db.query(Product).filter(
         Product.id == order.product_id
     ).first()
@@ -197,11 +204,12 @@ def create_order(
     total_price = product.price * order.quantity
 
     new_order = Order(
-        customer_name=order.customer_name,
-        product_id=order.product_id,
-        quantity=order.quantity,
-        total_price=total_price,
-        status="Pending"
+    customer_id=order.customer_id,
+    customer_name=customer.name,
+    product_id=order.product_id,
+    quantity=order.quantity,
+    total_price=total_price,
+    status="Pending"
     )
 
     inventory.quantity -= order.quantity

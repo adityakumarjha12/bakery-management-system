@@ -23,6 +23,7 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     customer_name = Column(String, nullable=False)
+    customer_id = Column(Integer, nullable=True)
     product_id = Column(Integer, nullable=False)
     quantity = Column(Integer, nullable=False)
     total_price = Column(Float, nullable=False)

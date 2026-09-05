@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from pydantic import BaseModel
@@ -11,6 +12,13 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bakery Management System")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -77,7 +85,6 @@ def create_product(
         description=product.description,
         price=product.price,
         category=product.category,
-        stock=product.stock
     )
 
     db.add(new_product)

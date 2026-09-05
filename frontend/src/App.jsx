@@ -37,7 +37,7 @@ const [newCustomer, setNewCustomer] = useState({
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/products/${productId}`,
+        `https://bakery-management-system-p36q.onrender.com/products/${productId}`,
         {
           method: "DELETE",
         }
@@ -62,7 +62,7 @@ const [newCustomer, setNewCustomer] = useState({
   
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/products/${editingProduct.id}`,
+        `https://bakery-management-system-p36q.onrender.com/products/${editingProduct.id}`,
         {
           method: "PUT",
           headers: {
@@ -98,7 +98,7 @@ const [newCustomer, setNewCustomer] = useState({
   };
   const handleCreateOrder = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/orders", {
+      const response = await fetch("https://bakery-management-system-p36q.onrender.com/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,13 +116,13 @@ const [newCustomer, setNewCustomer] = useState({
         throw new Error(data.message || "Failed to create order");
       }
       const productsResponse = await fetch(
-        "http://127.0.0.1:8000/products"
+        "https://bakery-management-system-p36q.onrender.com/products"
       );
       
       const updatedProducts = await productsResponse.json();
       
       setProducts(updatedProducts);
-      const ordersResponse = await fetch("http://127.0.0.1:8000/orders");
+      const ordersResponse = await fetch("https://bakery-management-system-p36q.onrender.com/orders");
       const updatedOrders = await ordersResponse.json();
       setOrders(updatedOrders);
       alert("Order created successfully!");
@@ -141,7 +141,7 @@ const [newCustomer, setNewCustomer] = useState({
   const handleAddCustomer = async () => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/customers",
+        "https://bakery-management-system-p36q.onrender.com/customers",
         {
           method: "POST",
           headers: {
@@ -175,7 +175,7 @@ const [newCustomer, setNewCustomer] = useState({
     e.preventDefault();
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/products", {
+      const response = await fetch("https://bakery-management-system-p36q.onrender.com/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +210,7 @@ const [newCustomer, setNewCustomer] = useState({
     }
   };
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/products")
+    fetch("https://bakery-management-system-p36q.onrender.com/products")
       .then((response) => response.json())
       .then((data) => {
         setProducts(data);
@@ -222,7 +222,7 @@ const [newCustomer, setNewCustomer] = useState({
       });
   }, []);
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/customers")
+    fetch("https://bakery-management-system-p36q.onrender.com/customers")
       .then((response) => response.json())
       .then((data) => {
         setCustomers(data);
@@ -232,7 +232,7 @@ const [newCustomer, setNewCustomer] = useState({
       });
   }, []);
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/orders")
+    fetch("https://bakery-management-system-p36q.onrender.com/orders")
       .then((response) => response.json())
       .then((data) => {
         setOrders(data);

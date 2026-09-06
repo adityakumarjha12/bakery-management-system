@@ -1,257 +1,298 @@
-# 🍰 Sweet Bakery — Bakery Management System
+# 🧁 Sweet Bakery — Containerized Bakery Management System
 
-A full-stack bakery management system for managing products, inventory, customers, and orders through a modern and easy-to-use dashboard.
+A full-stack bakery management system built with **React.js, FastAPI, PostgreSQL, RabbitMQ, and Docker**.
 
-The project is containerized using **Docker and Docker Compose** and includes PostgreSQL, FastAPI, React/Nginx, RabbitMQ, and a background worker service.
+The application allows bakery staff to manage products, customers, inventory, and orders through a simple web dashboard.
 
-## 🚀 Live Demo
+---
 
-**Live Application:**
+## 🌐 Live Demo
+
+### Frontend
+
 https://effervescent-kleicha-e9bd9b.netlify.app/
 
-**Backend API:**
-https://bakery-management-system-p36q.onrender.com/
+### Backend API
 
-**GitHub Repository:**
+https://bakery-management-system-p36q.onrender.com
+
+### GitHub Repository
+
 https://github.com/adityakumarjha12/bakery-management-system
 
 ---
 
-## ✨ Features
+# 📌 Project Overview
 
-### 📊 Dashboard
+The Sweet Bakery Management System is a containerized full-stack application designed to manage common bakery operations.
 
-* Total products
-* Total inventory items
-* Low-stock products
-* Total orders
-* Total sales
+The system provides:
 
-### 🍰 Product Management
+* Product management
+* Customer management
+* Inventory management
+* Order management
+* Order status tracking
+* RabbitMQ-based asynchronous order processing
+* Container health monitoring
+* PostgreSQL database persistence
+* Docker Compose orchestration
 
-* Add products
-* Edit products
-* Delete products
+The project is deployed using **Netlify for the frontend** and **Render for the backend and PostgreSQL database**.
+
+---
+
+# ✨ Features
+
+## 🧁 Product Management
+
+* Add new bakery products
+* View all products
 * Search products
-* Filter products by category
-* Track product prices and stock
+* Update product information
+* Delete products
+* Track product stock
+* Display low-stock products
 
-### 📦 Inventory Management
-
-* Real-time stock tracking
-* Minimum stock levels
-* Automatic low-stock detection
-* Prevents stock from going below zero
-
-### 👥 Customer Management
+## 👥 Customer Management
 
 * Add customers
-* Store customer name, email and phone
-* Associate customers with orders
+* View customer information
+* Store customer name, email, and phone number
 
-### 🛒 Order Management
+## 🛒 Order Management
 
-* Create orders
-* Select customers and products
-* Set order quantities
-* Calculate order totals
-* Automatically update inventory
+* Create new orders
+* Automatically calculate order totals
+* Prevent orders when stock is insufficient
+* Automatically reduce product stock
 * Track order status
-* Check order status through API
-* Calculate total sales
+* Update order status
 
-### 🐇 RabbitMQ Order Processing
+Supported order statuses:
 
-* Orders are published to a RabbitMQ queue after creation
-* A dedicated worker service consumes orders from the queue
-* Worker processes orders asynchronously
-* RabbitMQ provides reliable message delivery between the backend and worker
+* Pending
+* Preparing
+* Ready
+* Completed
 
-### ❤️ Container Health Monitoring
+## 📦 Inventory Management
 
-Health checks are configured for all five Docker services:
+The system automatically updates product stock when an order is placed.
 
-* PostgreSQL
-* FastAPI Backend
-* RabbitMQ
-* Worker
-* React/Nginx Frontend
-
----
-## ✅ Advanced Features Implemented
-
-As part of the assignment's advanced requirements, two features were implemented:
-
-1. **Worker Service** — A dedicated container consumes order messages from RabbitMQ and processes them asynchronously, decoupled from the API server.
-2. **Health Checks** — All five containers (PostgreSQL, backend, RabbitMQ, worker, frontend) have configured health checks so Docker Compose can verify functional readiness, not just process uptime.
+Products with low stock can be identified from the inventory section.
 
 ---
 
-## 📸 Screenshots
+# 🐇 RabbitMQ Order Processing
 
-### Dashboard
+RabbitMQ is used to implement asynchronous order processing.
+
+When an order is created:
+
+1. The order is stored in PostgreSQL.
+2. The backend publishes the order information to RabbitMQ.
+3. The RabbitMQ worker receives the order.
+4. The worker processes the order.
+5. The worker acknowledges the message after successful processing.
+
+Example worker output:
+
+```text
+Connected to RabbitMQ
+Order worker is waiting for messages...
+Processing order #4 for customer Test Customer
+Product ID: 1, Quantity: 1, Total: ₹500.0
+Order #4 processed successfully
+```
+
+This demonstrates the use of a **message queue and worker service** for asynchronous processing.
+
+---
+
+# ❤️ Container Health Monitoring
+
+Health checks are configured for all major containers.
+
+| Service    | Health Check                   |
+| ---------- | ------------------------------ |
+| PostgreSQL | `pg_isready`                   |
+| Backend    | `/health` endpoint             |
+| RabbitMQ   | `rabbitmq-diagnostics -q ping` |
+| Worker     | RabbitMQ connection test       |
+| Frontend   | Nginx HTTP check               |
+
+Docker Compose automatically monitors the health of these services.
+
+---
+
+# 🚀 Advanced Features
+
+This project implements two advanced Docker features:
+
+### 1. RabbitMQ Worker Service
+
+A dedicated worker container processes orders asynchronously through RabbitMQ.
+
+### 2. Container Health Checks
+
+All application containers include Docker health checks to verify that services are running correctly.
+
+---
+
+# 🖼️ Screenshots
+
+## Dashboard
 
 ![Dashboard](screenshots/dashboard.png)
 
-### Products
+## Products
 
 ![Products](screenshots/products.png)
 
-### Orders
+## Orders
 
 ![Orders](screenshots/orders.png)
 
-### Docker Containers Health Check
+## Docker Health Checks
 
-All five services are running successfully with Docker Compose.
-
-![Docker Compose Health Check](screenshots/docker-health.png)
+![Docker Health Checks](screenshots/docker-health.png)
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
-### Frontend
+## Frontend
 
 * React.js
 * Vite
+* HTML
+* CSS
 * JavaScript
-* HTML5
-* CSS3
-* Nginx
 
-### Backend
+## Backend
 
 * Python
 * FastAPI
-* Uvicorn
 * SQLAlchemy
-* Pika
+* Uvicorn
 
-### Database
+## Database
 
 * PostgreSQL
-* Psycopg2
 
-### Message Queue
+## Message Queue
 
 * RabbitMQ
-* RabbitMQ Management Plugin
+* Pika
 
-### Containerization
+## Containerization
 
 * Docker
 * Docker Compose
+* Nginx
 
-### Deployment
+## Deployment
 
-* Netlify — Frontend
-* Render — Backend
-* Render PostgreSQL — Database
-
-### Development
-
-* Git
-* GitHub
-* VS Code
+* Netlify
+* Render
 
 ---
 
-## 🏗️ Architecture
-
-### Production Architecture
+# 🏗️ Architecture
 
 ```text
-                    Sweet Bakery
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │      Frontend       │
-              │    React + Vite     │
-              │      Netlify        │
-              └──────────┬──────────┘
-                         │
-                    REST API
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │       Backend       │
-              │       FastAPI       │
-              │       Render        │
-              └──────────┬──────────┘
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │     PostgreSQL      │
-              │       Database      │
-              │       Render        │
-              └─────────────────────┘
+                         ┌─────────────────────┐
+                         │      Frontend       │
+                         │    React + Vite     │
+                         │      Nginx           │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │       Backend       │
+                         │   FastAPI + Python  │
+                         └───────┬───────┬─────┘
+                                 │       │
+                    ┌────────────┘       └─────────────┐
+                    ▼                                  ▼
+          ┌──────────────────┐              ┌──────────────────┐
+          │    PostgreSQL    │              │    RabbitMQ      │
+          │     Database     │              │   Message Queue  │
+          └──────────────────┘              └────────┬─────────┘
+                                                     │
+                                                     ▼
+                                            ┌──────────────────┐
+                                            │  Worker Service  │
+                                            │   Order Worker   │
+                                            └──────────────────┘
 ```
-
-### Docker Architecture
-
-```text
-                         Sweet Bakery
-                              │
-                              ▼
-                 ┌─────────────────────┐
-                 │ Frontend Container   │
-                 │ React + Nginx        │
-                 │ Port 5173 → 80       │
-                 └──────────┬──────────┘
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │ Backend Container    │
-                 │ FastAPI + Uvicorn    │
-                 │ Port 8000            │
-                 └──────┬─────────┬────┘
-                        │         │
-                        ▼         ▼
-              ┌─────────────┐  ┌─────────────┐
-              │ PostgreSQL  │  │  RabbitMQ   │
-              │ Container   │  │  Container  │
-              │             │  │             │
-              └─────────────┘  └──────┬──────┘
-                                       │
-                                       ▼
-                              ┌────────────────┐
-                              │ Worker         │
-                              │ Container      │
-                              │ Python + Pika  │
-                              └────────────────┘
-```
-
-All Docker services communicate through a dedicated Docker bridge network.
 
 ---
 
-## 📁 Project Structure
+# 🐳 Docker Architecture
+
+The application consists of five Docker services:
 
 ```text
-bakery-management-system/
+db
+│
+├── PostgreSQL database
+│
+backend
+│
+├── FastAPI application
+│
+rabbitmq
+│
+├── RabbitMQ message broker
+│
+worker
+│
+├── Processes orders from RabbitMQ
+│
+frontend
+│
+└── React application served using Nginx
+```
 
+All services communicate through a Docker bridge network named:
+
+```text
+bakery-network
+```
+
+PostgreSQL uses a persistent Docker volume:
+
+```text
+postgres_data
+```
+
+This ensures that database data is retained when the containers are restarted.
+
+---
+
+# 📁 Project Structure
+
+```text
+bakery-system/
 │
 ├── backend/
+│   ├── Dockerfile
+│   ├── .dockerignore
 │   ├── main.py
 │   ├── models.py
 │   ├── database.py
 │   ├── worker.py
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── .dockerignore
+│   └── requirements.txt
 │
 ├── frontend/
+│   ├── Dockerfile
+│   ├── .dockerignore
 │   ├── src/
-│   │   ├── App.jsx
-│   │   ├── App.css
-│   │   ├── index.css
-│   │   └── main.jsx
 │   ├── public/
 │   ├── package.json
-│   ├── vite.config.js
-│   ├── Dockerfile
-│   └── .dockerignore
+│   └── vite.config.js
 │
 ├── screenshots/
 │   ├── dashboard.png
@@ -259,10 +300,10 @@ bakery-management-system/
 │   ├── orders.png
 │   └── docker-health.png
 │
-├── .gitignore
 ├── docker-compose.yml
-├── README.md
-└── netlify.toml
+├── netlify.toml
+├── .gitignore
+└── README.md
 ```
 
 ---
@@ -271,58 +312,65 @@ bakery-management-system/
 
 ## Prerequisites
 
-Install:
+Make sure Docker and Docker Compose are installed.
 
-* Docker Desktop
-* Git
-
-Verify Docker:
+Check Docker:
 
 ```bash
 docker --version
+```
+
+Check Docker Compose:
+
+```bash
 docker compose version
 ```
+
+---
 
 ## Clone the Repository
 
 ```bash
 git clone https://github.com/adityakumarjha12/bakery-management-system.git
+```
+
+Navigate into the project:
+
+```bash
 cd bakery-management-system
 ```
 
-## Start All Services
+---
+
+## Start the Application
+
+Run:
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
-This starts:
+Docker Compose starts:
 
-| Service    | Purpose                    |     Port |
-| ---------- | -------------------------- | -------: |
-| `db`       | PostgreSQL database        |     5432 |
-| `backend`  | FastAPI API                |     8000 |
-| `rabbitmq` | Message queue              |     5672 |
-| `worker`   | Background order processor | Internal |
-| `frontend` | React + Nginx              |     5173 |
+* PostgreSQL
+* FastAPI backend
+* RabbitMQ
+* RabbitMQ worker
+* React frontend
 
-## Check Container Status
+---
+
+## Check Containers
+
+Run:
 
 ```bash
 docker compose ps
 ```
 
-All five services should become healthy/running.
+All containers should show a healthy or running status.
 
-Expected services:
-
-```text
-bakery-db
-bakery-backend
-bakery-rabbitmq
-bakery-worker
-bakery-frontend
-```
+---
 
 ## Access the Application
 
@@ -338,7 +386,7 @@ Backend:
 http://localhost:8000
 ```
 
-Swagger API documentation:
+FastAPI documentation:
 
 ```text
 http://localhost:8000/docs
@@ -350,15 +398,15 @@ RabbitMQ Management Dashboard:
 http://localhost:15672
 ```
 
+---
+
 ## Stop the Application
 
 ```bash
 docker compose down
 ```
 
-The PostgreSQL data is stored in a Docker named volume, so database data persists when containers are stopped.
-
-To remove containers and the database volume:
+To remove containers and the associated database volume:
 
 ```bash
 docker compose down -v
@@ -375,8 +423,6 @@ docker compose down -v
 ```http
 GET /products
 ```
-
-Returns all bakery products.
 
 ### Create a product
 
@@ -395,11 +441,16 @@ Example:
   "category": "Cake"
 }
 ```
+
 ### Update a product
 
 ```http
 PUT /products/{product_id}
+```
 
+Example:
+
+```json
 {
   "name": "Chocolate Cake",
   "price": 550,
@@ -407,22 +458,43 @@ PUT /products/{product_id}
   "description": "Fresh chocolate cake",
   "category": "Cake"
 }
+```
 
+### Delete a product
+
+```http
 DELETE /products/{product_id}
+```
 
+---
+
+# 👥 Customers
+
+### List all customers
+
+```http
 GET /customers
+```
 
+### Create a customer
+
+```http
 POST /customers
+```
 
+Example:
+
+```json
 {
   "name": "Test Customer",
   "email": "test@example.com",
   "phone": "9876543210"
 }
+```
 
 ---
 
-## Orders
+# 🛒 Orders
 
 ### Place an order
 
@@ -440,42 +512,48 @@ Example:
 }
 ```
 
-The backend:
+The backend automatically:
 
-1. Validates the customer and product.
-2. Creates the order.
-3. Calculates the total price.
-4. Updates inventory.
+1. Checks product availability.
+2. Calculates the total price.
+3. Reduces product stock.
+4. Creates the order.
 5. Publishes the order to RabbitMQ.
 
-### Check order status
+---
+
+### Get Order Status
 
 ```http
 GET /orders/{order_id}/status
 ```
 
-Example:
-
-```text
-GET /orders/4/status
-```
-
-Response:
+Example response:
 
 ```json
 {
-  "order_id": 4,
+  "order_id": 3,
   "status": "Pending"
 }
 ```
 
-### Update order status
+---
+
+### Update Order Status
 
 ```http
 PUT /orders/{order_id}/status
 ```
 
-Supported statuses:
+Example:
+
+```json
+{
+  "status": "Preparing"
+}
+```
+
+Allowed statuses:
 
 ```text
 Pending
@@ -486,90 +564,65 @@ Completed
 
 ---
 
-# 🐇 RabbitMQ and Worker Processing
+# 🐇 RabbitMQ Worker Processing
 
-When an order is created, the backend publishes order information to the RabbitMQ `orders` queue.
-
-```text
-Customer
-   │
-   ▼
-POST /orders
-   │
-   ▼
-FastAPI Backend
-   │
-   ├──────────────► PostgreSQL
-   │
-   └──────────────► RabbitMQ
-                         │
-                         ▼
-                    orders queue
-                         │
-                         ▼
-                       Worker
-                         │
-                         ▼
-                 Order Processing
-```
-
-The worker uses **Pika** to consume messages from RabbitMQ.
-
-Worker logs can be viewed using:
+The worker service runs:
 
 ```bash
-docker logs bakery-worker
+python -u worker.py
 ```
 
-Example:
+The worker connects to the RabbitMQ service using the Docker service name:
 
 ```text
-Connected to RabbitMQ
-Order worker is waiting for messages...
-Processing order #4 for customer Test Customer
-Product ID: 1, Quantity: 1, Total: ₹500.0
-Order #4 processed successfully
+rabbitmq
 ```
+
+Orders are placed into the:
+
+```text
+orders
+```
+
+queue.
+
+The worker consumes messages from this queue and acknowledges successfully processed orders.
 
 ---
 
 # ❤️ Health Checks
 
-Health checks are configured for every container.
+Docker Compose includes health checks for all services.
 
 ### PostgreSQL
 
-Uses `pg_isready` to verify database availability.
+```yaml
+healthcheck:
+  test: ["CMD-SHELL", "pg_isready -U bakery_user -d bakery"]
+```
 
 ### Backend
 
-Calls:
+The backend health check calls:
 
 ```text
-GET /health
+/health
 ```
 
 ### RabbitMQ
 
-Uses:
-
-```text
-rabbitmq-diagnostics ping
+```yaml
+healthcheck:
+  test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
 ```
 
 ### Worker
 
-Tests its ability to connect to RabbitMQ.
+The worker checks whether it can establish a connection with RabbitMQ.
 
 ### Frontend
 
-Uses `wget` to verify that the Nginx server responds on port 80.
-
-Check health status:
-
-```bash
-docker compose ps
-```
+The frontend health check verifies that Nginx is responding on port 80.
 
 ---
 
@@ -589,99 +642,99 @@ Production credentials are not stored in the GitHub repository.
 
 # 🧪 Testing
 
-The Dockerized application has been tested for:
+The application was tested using both the web interface and API endpoints.
 
-* ✅ Product creation
-* ✅ Product retrieval
-* ✅ Customer creation
-* ✅ Order creation
-* ✅ Order status checking
-* ✅ Order status updates
-* ✅ Inventory tracking
-* ✅ Low-stock detection
-* ✅ Stock protection
-* ✅ Sales calculation
-* ✅ PostgreSQL persistence
-* ✅ Frontend-backend communication
-* ✅ RabbitMQ message publishing
-* ✅ Worker order processing
-* ✅ PostgreSQL health check
-* ✅ Backend health check
-* ✅ RabbitMQ health check
-* ✅ Worker health check
-* ✅ Frontend/Nginx health check
+### Product Testing
+
+* Product creation
+* Product listing
+* Product update
+* Product deletion
+* Stock management
+
+### Customer Testing
+
+* Customer creation
+* Customer retrieval
+
+### Order Testing
+
+* Order creation
+* Total price calculation
+* Stock reduction
+* Order status retrieval
+* Order status updates
+
+### RabbitMQ Testing
+
+Orders were successfully published to RabbitMQ and processed by the worker service.
+
+### Docker Testing
+
+All five containers were tested using:
+
+```bash
+docker compose ps
+```
+
+and confirmed to be running with health checks.
 
 ---
 
-# 📝 Design Decisions
+# 💡 Design Decisions
 
-### 1. PostgreSQL Container
+### PostgreSQL
 
-PostgreSQL was selected as the relational database because the application contains structured relationships between products, customers, inventory, and orders.
+PostgreSQL was selected as the relational database because bakery products, customers, and orders have structured relationships.
 
-A Docker named volume is used to persist database data.
+### FastAPI
 
-### 2. FastAPI Backend
+FastAPI provides a lightweight and high-performance backend with automatic API documentation through Swagger UI.
 
-FastAPI provides lightweight REST APIs and integrates well with SQLAlchemy and Python-based background services.
+### React
 
-### 3. React + Nginx
+React was selected for building an interactive frontend dashboard with reusable components.
 
-React is used for the frontend interface. The production build is generated during the Docker image build and served using Nginx.
+### Docker
 
-This reduces runtime dependencies and provides a lightweight production-style frontend container.
+Docker provides isolated and reproducible environments for every application component.
 
-### 4. RabbitMQ
+### Docker Compose
 
-RabbitMQ was selected to decouple order creation from asynchronous order processing.
+Docker Compose simplifies the management of multiple services and allows them to communicate through a shared Docker network.
 
-The backend publishes order messages to a durable queue, while the worker processes those messages independently.
+### RabbitMQ
 
-### 5. Worker Service
+RabbitMQ was selected to demonstrate asynchronous order processing using a message queue and worker architecture.
 
-A separate worker container allows order processing to happen independently from the API server.
+### Persistent Volume
 
-This architecture can be scaled by running additional worker instances when required.
-
-### 6. Health Checks
-
-Health checks allow Docker Compose to determine whether individual services are functioning correctly rather than only checking whether the containers are running.
-
-### 7. Docker Compose
-
-Docker Compose was used to manage the complete multi-container application from a single configuration file.
-
-This simplifies development, testing, networking, and deployment of the containerized system.
+A PostgreSQL Docker volume is used so database data is not lost when containers are restarted.
 
 ---
 
 # 🔮 Future Improvements
 
-* User authentication
-* Role-based access control
-* Product image uploads
-* Sales analytics
+Possible future improvements include:
+
+* Redis caching for product listings
+* Authentication and role-based access
+* Sales reports and analytics
 * Invoice generation
-* Order cancellation
-* Inventory restocking
-* PDF/Excel reports
-* Email notifications
-* Redis caching
-* Automated CI/CD pipeline
-* Production Kubernetes deployment
+* Payment integration
+* Email/SMS order notifications
+* Kubernetes deployment
+* CI/CD pipeline
+* Improved inventory forecasting
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Aditya Kumar Jha**
 
 B.Tech — Computer Science & Engineering
-Specialization: Cloud Computing & Virtualization
-
-GitHub:
-https://github.com/adityakumarjha12
+Specialization: Cloud Computing and Virtualization
+UPES — Batch 2022–2026
 
 ---
-
-⭐ If you find this project useful, consider giving the repository a star!

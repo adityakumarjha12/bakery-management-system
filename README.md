@@ -78,6 +78,14 @@ Health checks are configured for all five Docker services:
 * React/Nginx Frontend
 
 ---
+## ✅ Advanced Features Implemented
+
+As part of the assignment's advanced requirements, two features were implemented:
+
+1. **Worker Service** — A dedicated container consumes order messages from RabbitMQ and processes them asynchronously, decoupled from the API server.
+2. **Health Checks** — All five containers (PostgreSQL, backend, RabbitMQ, worker, frontend) have configured health checks so Docker Compose can verify functional readiness, not just process uptime.
+
+---
 
 ## 📸 Screenshots
 
@@ -387,6 +395,30 @@ Example:
   "category": "Cake"
 }
 ```
+### Update a product
+
+```http
+PUT /products/{product_id}
+
+{
+  "name": "Chocolate Cake",
+  "price": 550,
+  "stock": 8,
+  "description": "Fresh chocolate cake",
+  "category": "Cake"
+}
+
+DELETE /products/{product_id}
+
+GET /customers
+
+POST /customers
+
+{
+  "name": "Test Customer",
+  "email": "test@example.com",
+  "phone": "9876543210"
+}
 
 ---
 

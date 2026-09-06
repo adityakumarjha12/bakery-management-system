@@ -1,3 +1,6 @@
+import json
+import pika
+
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -8,6 +11,24 @@ from typing import Optional
 from database import engine, Base, SessionLocal
 from models import Product, Inventory, Order, Customer
 
+RABBITMQ_HOST = "rabbitmq"
+
+def publish_order(order_data):
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host=RABBITMQ_HOST)
+    )
+    channel = connection.channel()
+
+    channel.queue_declare(queue="orders", durable=True)
+
+    channel.basic_publish(
+        exchange="",
+        routing_key="orders",
+        body=json.dumps(order_data),
+        properties=pika.BasicProperties(delivery_mode=2)
+    )
+
+    connection.close()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bakery Management System")
@@ -273,7 +294,15 @@ def create_order(
     db.commit()
     db.refresh(new_order)
 
-    return new_order
+    publish_order({
+        "order_id": new_order.id,
+        "customer_name": customer.name,
+        "product_id": new_order.product_id,
+        "quantity": new_order.quantity,
+        "total_price": new_order.total_price
+    })
+
+    return new_order 
 
 @app.get("/orders")
 def get_orders(db: Session = Depends(get_db)):
@@ -314,6 +343,18 @@ def update_order_status(
     db.refresh(existing_order)
 
     return existing_order
+
+@app.get("/orders/{order_id}/status")
+def get_order_status(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+
+    if not order:
+        return {"message": "Order not found"}
+
+    return {
+        "order_id": order.id,
+        "status": order.status
+    }
 class CustomerCreate(BaseModel):
     name: str
     phone: str

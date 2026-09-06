@@ -93,6 +93,12 @@ Health checks are configured for all five Docker services:
 
 ![Orders](screenshots/orders.png)
 
+### Docker Containers Health Check
+
+All five services are running successfully with Docker Compose.
+
+![Docker Compose Health Check](screenshots/docker-health.png)
+
 ---
 
 ## 🛠️ Tech Stack
@@ -242,7 +248,8 @@ bakery-management-system/
 ├── screenshots/
 │   ├── dashboard.png
 │   ├── products.png
-│   └── orders.png
+│   ├── orders.png
+│   └── docker-health.png
 │
 ├── .gitignore
 ├── docker-compose.yml
